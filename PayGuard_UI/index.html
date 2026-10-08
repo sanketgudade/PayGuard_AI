@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayGuard AI | The Safety Layer for Autonomous Commerce</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-navy: #0B1F3A;
+            --primary-blue: #0070BA;
+            --bg-light: #F6F8FB;
+            --white: #FFFFFF;
+            --slate: #64748B;
+            --text-main: #10233F;
+            --green-safe: #16A34A;
+            --amber-warn: #D97706;
+            --red-crit: #DC2626;
+            --border-color: #E5EAF0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-main); line-height: 1.6; overflow-x: hidden; }
+
+        /* Unified Navbar */
+        .navbar { background: var(--white); border-bottom: 1px solid var(--border-color); height: 72px; display: flex; justify-content: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+        .nav-container { width: 100%; max-width: 1400px; padding: 0 32px; display: flex; justify-content: space-between; align-items: center; }
+        .nav-left { display: flex; align-items: center; gap: 32px; }
+        .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .brand-icon { font-size: 24px; color: var(--primary-blue); }
+        .brand-text { display: flex; flex-direction: column; line-height: 1.2; }
+        .brand-title { font-size: 18px; font-weight: 700; color: var(--primary-navy); }
+        .brand-subtitle { font-size: 12px; font-weight: 500; color: var(--slate); }
+        
+        .nav-links { display: flex; gap: 8px; }
+        .nav-link { text-decoration: none; color: var(--slate); font-weight: 500; font-size: 14px; padding: 8px 16px; border-radius: 6px; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
+        .nav-link i { font-size: 14px; }
+        .nav-link:hover { background: var(--bg-light); color: var(--primary-blue); }
+        .nav-link.active { background: #F0F7FF; color: var(--primary-blue); font-weight: 600; }
+        
+        .nav-right { display: flex; align-items: center; gap: 24px; }
+        .env-indicator { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--slate); }
+        .env-dot { width: 8px; height: 8px; background-color: var(--primary-blue); border-radius: 50%; }
+        .user-profile { display: flex; align-items: center; gap: 8px; color: var(--text-main); font-weight: 500; font-size: 14px; cursor: pointer; }
+        .user-profile i.fa-user { color: var(--slate); font-size: 18px; }
+        .user-profile i.fa-chevron-down { font-size: 10px; color: var(--slate); }
+        
+        .btn { padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: none; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+        .btn-primary { background: var(--primary-blue); color: var(--white); }
+        .btn-primary:hover { background: #005A96; }
+        .btn-outline { background: var(--white); color: var(--primary-navy); border: 1px solid var(--border-color); }
+        .btn-outline:hover { border-color: var(--primary-blue); color: var(--primary-blue); }
+
+        /* Global Layout */
+        .main-container { max-width: 1400px; margin: 0 auto; padding: 48px 32px; }
+
+        /* Hero Redesign */
+        .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; min-height: 520px; }
+        .hero-left .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 1px; color: var(--primary-blue); text-transform: uppercase; margin-bottom: 16px; }
+        .hero-left h1 { font-size: 48px; font-weight: 700; color: var(--primary-navy); line-height: 1.1; margin-bottom: 24px; }
+        .hero-left p { font-size: 18px; color: var(--slate); margin-bottom: 32px; max-width: 540px; }
+        .hero-actions { display: flex; gap: 16px; margin-bottom: 32px; }
+        .hero-trust { display: flex; gap: 24px; font-size: 13px; font-weight: 600; color: var(--slate); }
+        .hero-trust span { display: flex; align-items: center; gap: 6px; }
+
+        .hero-right { position: relative; display: flex; justify-content: center; align-items: center; }
+        .transaction-card { background: var(--white); border: 1px solid var(--border-color); border-radius: 16px; padding: 32px; box-shadow: 0 12px 24px -8px rgba(0,0,0,0.08); width: 100%; max-width: 440px; position: relative; z-index: 2; }
+        .tx-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .tx-title { font-size: 12px; font-weight: 700; color: var(--slate); letter-spacing: 0.5px; text-transform: uppercase; }
+        .tx-amount { font-size: 32px; font-weight: 700; color: var(--primary-navy); }
+        .tx-item { font-size: 16px; font-weight: 500; color: var(--text-main); }
+        .tx-merchant { font-size: 14px; color: var(--slate); }
+        
+        .tx-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+        .stat-box { background: var(--bg-light); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .stat-label { font-size: 11px; font-weight: 600; color: var(--slate); text-transform: uppercase; margin-bottom: 4px; }
+        .stat-val { font-size: 14px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 6px; }
+        .stat-val.safe { color: var(--green-safe); }
+        
+        .tx-decision { background: #F0FDF4; border: 1px solid var(--green-safe); padding: 16px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .decision-label { font-size: 12px; font-weight: 600; color: #166534; }
+        .decision-val { font-size: 16px; font-weight: 700; color: var(--green-safe); display: flex; align-items: center; gap: 8px; }
+        .tx-footer { text-align: center; font-size: 13px; font-weight: 600; color: var(--slate); display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+        /* Trust Strip */
+        .trust-strip { background: var(--white); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 24px 0; }
+        .trust-container { max-width: 1400px; margin: 0 auto; padding: 0 32px; display: flex; justify-content: space-between; align-items: center; }
+        .trust-item { display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 600; color: var(--primary-navy); }
+        .trust-item i { color: var(--primary-blue); font-size: 18px; }
+
+        /* How it works */
+        .section-header { text-align: center; margin-bottom: 48px; }
+        .section-header h2 { font-size: 32px; color: var(--primary-navy); margin-bottom: 12px; }
+        .section-header p { font-size: 16px; color: var(--slate); max-width: 600px; margin: 0 auto; }
+        
+        .flow-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; position: relative; }
+        .flow-card { background: var(--white); padding: 32px 24px; border-radius: 12px; border: 1px solid var(--border-color); position: relative; z-index: 2; }
+        .flow-num { font-size: 12px; font-weight: 700; color: var(--primary-blue); margin-bottom: 16px; display: block; }
+        .flow-card h3 { font-size: 18px; color: var(--primary-navy); margin-bottom: 12px; }
+        .flow-card p { font-size: 14px; color: var(--slate); line-height: 1.5; }
+
+        /* Security Features */
+        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 64px; }
+        .feature-card { background: var(--white); padding: 32px; border-radius: 12px; border: 1px solid var(--border-color); }
+        .feature-card i { font-size: 24px; color: var(--primary-blue); margin-bottom: 24px; }
+        .feature-card h3 { font-size: 18px; color: var(--primary-navy); margin-bottom: 12px; }
+        .feature-card p { font-size: 14px; color: var(--slate); }
+
+        /* Final CTA */
+        .cta-card { background: var(--white); border: 1px solid var(--border-color); border-radius: 16px; padding: 48px; text-align: center; margin-top: 64px; }
+        .cta-card h2 { font-size: 32px; color: var(--primary-navy); margin-bottom: 16px; }
+        .cta-card p { font-size: 16px; color: var(--slate); max-width: 600px; margin: 0 auto 32px; }
+        
+    </style>
+</head>
+<body>
+
+    <!-- Unified Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="index.html" class="brand">
+                    <i class="fa-solid fa-shield-halved brand-icon"></i>
+                    <div class="brand-text">
+                        <span class="brand-title">PayGuard AI</span>
+                        <span class="brand-subtitle">AI Safety Layer</span>
+                    </div>
+                </a>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link active"><i class="fa-solid fa-house"></i> Overview</a>
+                    <a href="dashboard.html" class="nav-link"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+                    <a href="agent.html" class="nav-link"><i class="fa-solid fa-brain"></i> AI Agent</a>
+                    <a href="transactions.html" class="nav-link"><i class="fa-solid fa-receipt"></i> Transactions</a>
+                    <a href="settings.html" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Policies</a>
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="env-indicator">
+                    <div class="env-dot"></div> Sandbox
+                </div>
+                <i class="fa-regular fa-bell" style="color: var(--slate); font-size: 18px; cursor: pointer;"></i>
+                <div class="user-profile">
+                    <i class="fa-solid fa-user"></i> Sanket <i class="fa-solid fa-chevron-down"></i>
+                </div>
+                <a href="agent.html" class="btn btn-primary"><i class="fa-solid fa-plus"></i> New Transaction</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- Two-column Hero -->
+        <div class="hero">
+            <div class="hero-left">
+                <div class="eyebrow">AI Payment Security</div>
+                <h1>Give AI the power to act.<br>Keep control of the money.</h1>
+                <p>PayGuard AI evaluates autonomous payment decisions using AI risk analysis, financial policies, and human approval controls before securely routing approved transactions through PayPal.</p>
+                <div class="hero-actions">
+                    <a href="dashboard.html" class="btn btn-primary">Launch Dashboard</a>
+                    <a href="agent.html" class="btn btn-outline">Try AI Agent</a>
+                </div>
+                <div class="hero-trust">
+                    <span><i class="fa-solid fa-brain"></i> AI Risk Engine</span>
+                    <span><i class="fa-solid fa-sliders"></i> Policy Enforcement</span>
+                    <span><i class="fa-solid fa-user-check"></i> Human Approval</span>
+                </div>
+            </div>
+            <div class="hero-right">
+                <div class="transaction-card">
+                    <div class="tx-header">
+                        <span class="tx-title">AI Payment Decision</span>
+                        <i class="fa-brands fa-paypal" style="color: #003087; font-size: 20px;"></i>
+                    </div>
+                    <div style="margin-bottom: 24px;">
+                        <div class="tx-item">MacBook Pro</div>
+                        <div class="tx-merchant">TechStore</div>
+                        <div class="tx-amount">$1,249.00</div>
+                    </div>
+                    <div class="tx-stats">
+                        <div class="stat-box">
+                            <div class="stat-label">AI Risk Score</div>
+                            <div class="stat-val safe">18 / 100 <span style="font-size:11px;font-weight:600;color:var(--slate);">LOW</span></div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Policy Check</div>
+                            <div class="stat-val safe"><i class="fa-solid fa-check"></i> PASSED</div>
+                        </div>
+                    </div>
+                    <div class="tx-decision">
+                        <span class="decision-label">Final Decision</span>
+                        <span class="decision-val"><i class="fa-solid fa-circle-check"></i> APPROVED</span>
+                    </div>
+                    <div class="tx-footer">
+                        <i class="fa-solid fa-shield-halved" style="color:var(--primary-blue);"></i> Protected by PayGuard AI
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trust Strip -->
+    <div class="trust-strip">
+        <div class="trust-container">
+            <div class="trust-item"><i class="fa-solid fa-chart-line"></i> AI Risk Intelligence</div>
+            <div class="trust-item"><i class="fa-solid fa-shield-halved"></i> Policy Guardrails</div>
+            <div class="trust-item"><i class="fa-solid fa-user-shield"></i> Human-in-the-loop</div>
+            <div class="trust-item"><i class="fa-solid fa-lock"></i> Secure Payment Execution</div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- How it works -->
+        <div class="section-header">
+            <h2>How PayGuard Protects Every Payment</h2>
+            <p>Every autonomous transaction passes through multiple safety layers before money moves.</p>
+        </div>
+        
+        <div class="flow-grid">
+            <div class="flow-card">
+                <span class="flow-num">01</span>
+                <h3>AI Intent</h3>
+                <p>The AI agent identifies a purchase and prepares the transaction details.</p>
+            </div>
+            <div class="flow-card">
+                <span class="flow-num">02</span>
+                <h3>Risk Intelligence</h3>
+                <p>PayGuard evaluates transaction amount, merchant history, category, and behavioral signals.</p>
+            </div>
+            <div class="flow-card">
+                <span class="flow-num">03</span>
+                <h3>Policy Enforcement</h3>
+                <p>User-defined financial guardrails determine whether the transaction can proceed.</p>
+            </div>
+            <div class="flow-card">
+                <span class="flow-num">04</span>
+                <h3>Secure Execution</h3>
+                <p>Approved transactions proceed securely through the PayPal payment infrastructure.</p>
+            </div>
+        </div>
+
+        <!-- Security Features -->
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fa-solid fa-money-bill-transfer"></i>
+                <h3>Autonomous Spending Limits</h3>
+                <p>Control exactly how much your AI agents are permitted to spend without manual intervention.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fa-solid fa-store-slash"></i>
+                <h3>Merchant Protection</h3>
+                <p>Automatically detect unfamiliar merchants and require additional human approval before processing.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fa-solid fa-brain"></i>
+                <h3>Explainable AI Decisions</h3>
+                <p>Understand exactly why every autonomous transaction was approved, flagged for review, or blocked.</p>
+            </div>
+        </div>
+
+        <!-- Final CTA -->
+        <div class="cta-card">
+            <h2>AI should be autonomous.<br>Your money shouldn't be.</h2>
+            <p>Give AI agents the ability to act while keeping every financial decision observable, explainable, and policy-controlled.</p>
+            <div style="display:flex; justify-content:center; gap:16px;">
+                <a href="settings.html" class="btn btn-primary">Configure Guardrails</a>
+                <a href="dashboard.html" class="btn btn-outline">Explore Dashboard</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

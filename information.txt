@@ -1,0 +1,104 @@
+# PayPal AI Hackathon: Comprehensive Submission Guide & Project Blueprint
+
+## 1. Project Overview & Architecture
+**Project Name:** PayGuard AI - The Safety Layer for Autonomous Commerce
+**Elevator Pitch:** PayGuard AI evaluates autonomous payment decisions using AI risk analysis, financial policies, and human approval controls before securely routing approved transactions through PayPal.
+
+### The Problem
+As autonomous AI agents (like AutoGPT, custom LLMs, or shopping bots) become more prevalent, they will need the ability to make purchases. However, giving an AI direct, unrestricted access to a payment API is extremely dangerous. 
+
+### The Solution: PayGuard AI
+PayGuard AI acts as a middleware safety layer. When an AI agent wants to make a purchase, it doesn't call PayPal directly. It calls PayGuard AI.
+1. **AI Intent:** The agent requests a purchase.
+2. **Risk Intelligence:** PayGuard evaluates the transaction (amount, merchant history, category).
+3. **Policy Enforcement:** PayGuard checks user-defined guardrails (e.g., "$500 autonomous limit").
+4. **Human-in-the-loop:** If the transaction is high-risk or exceeds limits, it requires manual human approval.
+5. **Secure Execution:** Only after passing these checks does PayGuard route the transaction securely to the PayPal API to execute the payment.
+
+---
+
+## 2. Devpost Submission Requirements
+
+### Core Requirements
+1. **PayPal Integration:** You MUST integrate the PayPal developer platform using the free sandbox environment. PayGuard AI fulfills this by using PayPal as the final execution layer for approved transactions.
+2. **AI Integration:** You MUST use an AI tool, model, or platform. PayGuard AI fulfills this by using an AI Risk Engine to score transactions and an AI Agent simulator to generate purchase intents.
+3. **Demonstration Video:** 
+   - Maximum 3 minutes (judges will not watch past 3 minutes).
+   - Hosted on YouTube (Public or Unlisted).
+   - The video should demonstrate the UI, the risk analysis process, and a successful PayPal transaction block/approval.
+4. **Code Repository:**
+   - Must be public (GitHub, GitLab, Bitbucket).
+   - Must include an OSI approved license (e.g., MIT, Apache 2.0).
+   - Must have a README with clear setup instructions and explanations of how PayPal and AI were used.
+5. **Working Demo:** A URL to the hosted application or a test build.
+
+### Optional Sponsor Integrations
+You can enhance your project and compete for side prizes by using:
+- **Render:** For hosting the Flask backend and UI.
+- **Postman:** For testing the APIs and demonstrating the endpoints.
+- **Elastic:** For storing and searching the Transaction Audit logs.
+- **AG Grid:** For rendering the transactions table in the UI.
+- **APIMatic / Zapier / KERNEL / Bryntum / Channel3 / Astropods**
+
+---
+
+## 3. How to Run the PayGuard AI Project Locally
+
+To run the full PayGuard AI project with the new premium UI, follow these steps:
+
+### Prerequisites
+- Python 3.8+ installed on your machine.
+- A PayPal Developer account (for Sandbox API credentials).
+
+### Setup Instructions
+1. **Prepare the Project Directory:**
+   Ensure all the UI files (`index.html`, `dashboard.html`, `agent.html`, `settings.html`, `transactions.html`) are placed inside your Flask project's `templates` folder.
+
+2. **Install Dependencies:**
+   Open your terminal/command prompt and run:
+   ```bash
+   pip install flask requests python-dotenv
+   # (Add any other dependencies your backend requires, like openai for the AI integration)
+   ```
+
+3. **Configure Environment Variables:**
+   Create a `.env` file in the root of your project directory and add your PayPal Sandbox credentials:
+   ```env
+   PAYPAL_CLIENT_ID=your_sandbox_client_id_here
+   PAYPAL_CLIENT_SECRET=your_sandbox_secret_here
+   ```
+
+4. **Run the Application:**
+   Start the Flask development server:
+   ```bash
+   python app.py
+   # OR
+   flask run
+   ```
+
+5. **Access the UI:**
+   Open your web browser and navigate to:
+   `http://127.0.0.1:5000`
+
+### Demo Flow for the Hackathon Video
+When recording your 3-minute pitch, use this exact flow:
+1. **Start on `index.html`:** Briefly explain that PayGuard is the safety layer between AI agents and PayPal.
+2. **Go to `settings.html`:** Show the financial guardrails. Point out the $500 autonomous limit.
+3. **Go to `agent.html` (The Simulator):**
+   - Click "Load High-Risk Demo" (Unknown merchant, $850).
+   - Click "Analyze Transaction". Watch the interactive loading animation.
+   - Show how the AI blocks the transaction because it exceeds the limit.
+   - Click "Load Low-Risk Demo" (Coffee, $4.50).
+   - Click "Analyze" and show how it is approved and theoretically routed to PayPal.
+4. **Go to `transactions.html`:** Show the audit log proving the system tracks every AI decision.
+
+---
+
+## 4. Key Submission Details (For the Devpost Form)
+
+**Project Story (Markdown):**
+Make sure to emphasize that you built a *security product* for the future of agentic commerce. Talk about the challenge of balancing AI autonomy with financial safety, and how you integrated PayPal's API securely on the backend while keeping the frontend focused on policy management.
+
+**Tech Requirement Explanation:**
+- **PayPal Tool:** Mention you used the PayPal REST APIs (Orders API / Checkout) in the Sandbox environment to execute transactions only after they pass the PayGuard policy layer.
+- **AI Tool:** Detail the specific LLM or risk model you used to parse transaction context and generate the 0-100 risk score in the background.

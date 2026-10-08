@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent | PayGuard AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-navy: #0B1F3A; --primary-blue: #0070BA;
+            --bg-light: #F6F8FB; --white: #FFFFFF; --slate: #64748B; --text-main: #10233F;
+            --green-safe: #16A34A; --amber-warn: #D97706; --red-crit: #DC2626; --border-color: #E5EAF0;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-main); line-height: 1.6; }
+
+        /* Unified Navbar */
+        .navbar { background: var(--white); border-bottom: 1px solid var(--border-color); height: 72px; display: flex; justify-content: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+        .nav-container { width: 100%; max-width: 1400px; padding: 0 32px; display: flex; justify-content: space-between; align-items: center; }
+        .nav-left { display: flex; align-items: center; gap: 32px; }
+        .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .brand-icon { font-size: 24px; color: var(--primary-blue); }
+        .brand-text { display: flex; flex-direction: column; line-height: 1.2; }
+        .brand-title { font-size: 18px; font-weight: 700; color: var(--primary-navy); }
+        .brand-subtitle { font-size: 12px; font-weight: 500; color: var(--slate); }
+        .nav-links { display: flex; gap: 8px; }
+        .nav-link { text-decoration: none; color: var(--slate); font-weight: 500; font-size: 14px; padding: 8px 16px; border-radius: 6px; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
+        .nav-link i { font-size: 14px; }
+        .nav-link:hover { background: var(--bg-light); color: var(--primary-blue); }
+        .nav-link.active { background: #F0F7FF; color: var(--primary-blue); font-weight: 600; }
+        .nav-right { display: flex; align-items: center; gap: 24px; }
+        .env-indicator { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--slate); }
+        .env-dot { width: 8px; height: 8px; background-color: var(--primary-blue); border-radius: 50%; }
+        .user-profile { display: flex; align-items: center; gap: 8px; color: var(--text-main); font-weight: 500; font-size: 14px; cursor: pointer; }
+        .user-profile i.fa-user { color: var(--slate); font-size: 18px; }
+        .user-profile i.fa-chevron-down { font-size: 10px; color: var(--slate); }
+        
+        .main-container { max-width: 1400px; margin: 0 auto; padding: 48px 32px; }
+        .page-header { margin-bottom: 32px; }
+        .page-header h1 { font-size: 32px; color: var(--primary-navy); margin-bottom: 8px; }
+        .page-header p { color: var(--slate); font-size: 16px; max-width: 600px; }
+
+        .agent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+        .card { background: var(--white); padding: 32px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+        .card-title { font-size: 18px; font-weight: 600; color: var(--primary-navy); margin-bottom: 24px; display: flex; align-items: center; gap: 12px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .card-title i { color: var(--primary-blue); }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--slate); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-control { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px; color: var(--text-main); }
+        .form-control:focus { outline: none; border-color: var(--primary-blue); }
+        .btn-primary { width: 100%; background: var(--primary-blue); color: var(--white); border: none; padding: 14px; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn-primary:hover { background: #005A96; }
+
+        .demo-links { display: flex; justify-content: center; gap: 16px; margin-top: 16px; }
+        .demo-link { font-size: 13px; color: var(--primary-blue); font-weight: 600; cursor: pointer; }
+        .demo-link:hover { text-decoration: underline; }
+
+        .analysis-step { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; color: var(--slate); font-size: 14px; }
+        .analysis-step i { width: 24px; text-align: center; font-size: 18px; color: var(--border-color); }
+        .analysis-step.done { color: var(--text-main); font-weight: 500; }
+        .analysis-step.done i { color: var(--primary-blue); }
+
+        .result-box { margin-top: 32px; padding: 24px; border-radius: 8px; border: 1px solid transparent; }
+        .result-title { font-weight: 700; font-size: 18px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; font-size: 14px; }
+        .result-grid strong { color: var(--slate); font-weight: 600; }
+        
+        .explanation-section { border-top: 1px solid rgba(0,0,0,0.1); padding-top: 16px; margin-top: 16px; }
+        .explanation-title { font-size: 13px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; }
+        .explanation-list { list-style: none; }
+        .explanation-list li { margin-bottom: 8px; font-size: 14px; display: flex; align-items: flex-start; gap: 8px; }
+
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="index.html" class="brand">
+                    <i class="fa-solid fa-shield-halved brand-icon"></i>
+                    <div class="brand-text">
+                        <span class="brand-title">PayGuard AI</span>
+                        <span class="brand-subtitle">AI Safety Layer</span>
+                    </div>
+                </a>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Overview</a>
+                    <a href="dashboard.html" class="nav-link"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+                    <a href="agent.html" class="nav-link active"><i class="fa-solid fa-brain"></i> AI Agent</a>
+                    <a href="transactions.html" class="nav-link"><i class="fa-solid fa-receipt"></i> Transactions</a>
+                    <a href="settings.html" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Policies</a>
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="env-indicator"><div class="env-dot"></div> Sandbox</div>
+                <i class="fa-regular fa-bell" style="color: var(--slate); font-size: 18px; cursor: pointer;"></i>
+                <div class="user-profile"><i class="fa-solid fa-user"></i> Sanket <i class="fa-solid fa-chevron-down"></i></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="page-header">
+            <h1>AI Payment Agent</h1>
+            <p>Simulate an autonomous purchase and see how PayGuard evaluates it before money moves.</p>
+        </div>
+
+        <div class="agent-grid">
+            <div class="card">
+                <h2 class="card-title"><i class="fa-solid fa-robot"></i> Transaction Simulator</h2>
+                <div class="form-group">
+                    <label>Merchant</label>
+                    <input type="text" class="form-control" value="UnknownShop" id="merchant">
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="text" class="form-control" value="850.00" id="amount">
+                    </div>
+                    <div class="form-group">
+                        <label>Currency</label>
+                        <select class="form-control" id="currency">
+                            <option>USD</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select class="form-control" id="category">
+                            <option>Digital Goods</option>
+                            <option>Electronics</option>
+                            <option>Food & Beverage</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Merchant History</label>
+                        <select class="form-control" id="history">
+                            <option>New Merchant</option>
+                            <option>Known Merchant</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Transaction Context</label>
+                    <textarea class="form-control" rows="3" id="context">AI agent wants to purchase a high-value digital product.</textarea>
+                </div>
+                <button class="btn-primary" onclick="simulate()"><i class="fa-solid fa-bolt"></i> Analyze Transaction</button>
+                <div class="demo-links">
+                    <span class="demo-link" onclick="loadHighRisk()">Load High-Risk Demo</span>
+                    <span class="demo-link" onclick="loadLowRisk()">Load Low-Risk Demo</span>
+                </div>
+            </div>
+
+            <div class="card" id="analysis-card" style="display: none;">
+                <h2 class="card-title"><i class="fa-solid fa-brain"></i> AI Analysis Process</h2>
+                
+                <div class="analysis-step done"><i class="fa-solid fa-circle-check"></i> Step 1: AI Intent Detected</div>
+                <div class="analysis-step done"><i class="fa-solid fa-circle-check"></i> Step 2: Risk Analysis</div>
+                <div class="analysis-step done"><i class="fa-solid fa-circle-check"></i> Step 3: Policy Evaluation</div>
+                <div class="analysis-step done"><i class="fa-solid fa-circle-check"></i> Step 4: Payment Decision</div>
+
+                <div class="result-box" id="result-box">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function loadHighRisk() {
+            document.getElementById('merchant').value = 'UnknownShop';
+            document.getElementById('amount').value = '850.00';
+            document.getElementById('category').value = 'Digital Goods';
+            document.getElementById('history').value = 'New Merchant';
+            document.getElementById('context').value = 'AI agent wants to purchase a high-value digital product.';
+        }
+        function loadLowRisk() {
+            document.getElementById('merchant').value = 'CoffeeHouse';
+            document.getElementById('amount').value = '4.50';
+            document.getElementById('category').value = 'Food & Beverage';
+            document.getElementById('history').value = 'Known Merchant';
+            document.getElementById('context').value = 'AI agent wants to purchase a morning coffee.';
+        }
+
+        function simulate() {
+            const card = document.getElementById('analysis-card');
+            const resultBox = document.getElementById('result-box');
+            const amt = parseFloat(document.getElementById('amount').value);
+            const history = document.getElementById('history').value;
+            const steps = document.querySelectorAll('.analysis-step');
+            
+            card.style.display = 'block';
+            resultBox.style.display = 'none';
+            
+            // Reset steps
+            steps.forEach(step => {
+                step.classList.remove('done');
+                step.innerHTML = step.innerHTML.replace('fa-circle-check', 'fa-circle').replace('fa-spinner fa-spin', 'fa-circle');
+            });
+
+            // Simulate the interactive loading process
+            let currentStep = 0;
+            
+            function processStep() {
+                if (currentStep > 0) {
+                    steps[currentStep - 1].classList.add('done');
+                    steps[currentStep - 1].innerHTML = steps[currentStep - 1].innerHTML.replace('fa-spinner fa-spin', 'fa-circle-check');
+                }
+                
+                if (currentStep < steps.length) {
+                    steps[currentStep].innerHTML = steps[currentStep].innerHTML.replace('fa-circle', 'fa-spinner fa-spin');
+                    currentStep++;
+                    setTimeout(processStep, 800); // 800ms delay per step
+                } else {
+                    showResults();
+                }
+            }
+            
+            processStep();
+
+            function showResults() {
+                resultBox.style.display = 'block';
+                
+                const isHighAmount = amt > 500;
+                const isNewMerchant = history === 'New Merchant';
+                const isDigitalGoods = document.getElementById('category').value === 'Digital Goods';
+                
+                if(isHighAmount || isNewMerchant) {
+                    let reasonText = "Transaction blocked due to policy violations.";
+                    let factorsHtml = "";
+                    
+                    if (isHighAmount && isNewMerchant) {
+                        reasonText = "Transaction exceeds autonomous spending limit and originates from a new merchant.";
+                        factorsHtml += '<li><i class="fa-solid fa-triangle-exclamation" style="color:var(--red-crit); width: 16px;"></i> New merchant</li>';
+                        factorsHtml += '<li><i class="fa-solid fa-circle-xmark" style="color:var(--red-crit); width: 16px;"></i> Outside autonomous spending limit</li>';
+                    } else if (isHighAmount) {
+                        reasonText = "Transaction exceeds the $500 autonomous spending limit.";
+                        factorsHtml += '<li><i class="fa-solid fa-circle-xmark" style="color:var(--red-crit); width: 16px;"></i> Outside autonomous spending limit</li>';
+                        factorsHtml += '<li><i class="fa-solid fa-triangle-exclamation" style="color:var(--red-crit); width: 16px;"></i> Above normal amount</li>';
+                    } else if (isNewMerchant) {
+                        reasonText = "Transactions from new merchants require human approval.";
+                        factorsHtml += '<li><i class="fa-solid fa-triangle-exclamation" style="color:var(--red-crit); width: 16px;"></i> New merchant</li>';
+                    }
+                    
+                    if (isDigitalGoods) {
+                        factorsHtml += '<li><i class="fa-solid fa-triangle-exclamation" style="color:var(--red-crit); width: 16px;"></i> High-risk category (Digital goods)</li>';
+                    }
+
+                    resultBox.style.borderColor = 'var(--red-crit)';
+                    resultBox.style.backgroundColor = '#FEF2F2';
+                    resultBox.innerHTML = `
+                        <div class="result-title" style="color: var(--red-crit);"><i class="fa-solid fa-circle-xmark"></i> Decision: BLOCKED</div>
+                        <div class="result-grid">
+                            <div><strong>Risk Score:</strong> 72 / 100 <span style="color:var(--red-crit); font-weight:700;">(HIGH)</span></div>
+                            <div><strong>Policy:</strong> FAILED</div>
+                            <div style="grid-column: span 2;"><strong>Payment Status:</strong> Blocked from PayPal execution</div>
+                        </div>
+                        <div class="explanation-section">
+                            <div class="explanation-title" style="color:var(--red-crit);">Reason for Block</div>
+                            <p style="font-size:14px; margin-bottom:12px;">${reasonText}</p>
+                            <div class="explanation-title">Risk Factors</div>
+                            <ul class="explanation-list">
+                                ${factorsHtml}
+                            </ul>
+                        </div>
+                    `;
+                } else {
+                    resultBox.style.borderColor = 'var(--green-safe)';
+                    resultBox.style.backgroundColor = '#F0FDF4';
+                    resultBox.innerHTML = `
+                        <div class="result-title" style="color: var(--green-safe);"><i class="fa-solid fa-circle-check"></i> Decision: APPROVED</div>
+                        <div class="result-grid">
+                            <div><strong>Risk Score:</strong> 5 / 100 <span style="color:var(--green-safe); font-weight:700;">(LOW)</span></div>
+                            <div><strong>Policy:</strong> PASSED</div>
+                            <div style="grid-column: span 2;"><strong>Payment Status:</strong> Ready for PayPal execution</div>
+                        </div>
+                        <div class="explanation-section">
+                            <div class="explanation-title">Why was this approved?</div>
+                            <ul class="explanation-list">
+                                <li><i class="fa-solid fa-check" style="color:var(--green-safe); width: 16px;"></i> Amount is below autonomous limit</li>
+                                <li><i class="fa-solid fa-check" style="color:var(--green-safe); width: 16px;"></i> Merchant has previous history</li>
+                                <li><i class="fa-solid fa-check" style="color:var(--green-safe); width: 16px;"></i> Category is permitted</li>
+                                <li><i class="fa-solid fa-check" style="color:var(--green-safe); width: 16px;"></i> No abnormal behavior detected</li>
+                            </ul>
+                        </div>
+                    `;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

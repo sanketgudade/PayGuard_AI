@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Guardrails | PayGuard AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-navy: #0B1F3A; --primary-blue: #0070BA;
+            --bg-light: #F6F8FB; --white: #FFFFFF; --slate: #64748B; --text-main: #10233F;
+            --green-safe: #16A34A; --amber-warn: #D97706; --red-crit: #DC2626; --border-color: #E5EAF0;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-main); line-height: 1.6; }
+
+        /* Unified Navbar */
+        .navbar { background: var(--white); border-bottom: 1px solid var(--border-color); height: 72px; display: flex; justify-content: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+        .nav-container { width: 100%; max-width: 1400px; padding: 0 32px; display: flex; justify-content: space-between; align-items: center; }
+        .nav-left { display: flex; align-items: center; gap: 32px; }
+        .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .brand-icon { font-size: 24px; color: var(--primary-blue); }
+        .brand-text { display: flex; flex-direction: column; line-height: 1.2; }
+        .brand-title { font-size: 18px; font-weight: 700; color: var(--primary-navy); }
+        .brand-subtitle { font-size: 12px; font-weight: 500; color: var(--slate); }
+        .nav-links { display: flex; gap: 8px; }
+        .nav-link { text-decoration: none; color: var(--slate); font-weight: 500; font-size: 14px; padding: 8px 16px; border-radius: 6px; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
+        .nav-link i { font-size: 14px; }
+        .nav-link:hover { background: var(--bg-light); color: var(--primary-blue); }
+        .nav-link.active { background: #F0F7FF; color: var(--primary-blue); font-weight: 600; }
+        .nav-right { display: flex; align-items: center; gap: 24px; }
+        .env-indicator { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--slate); }
+        .env-dot { width: 8px; height: 8px; background-color: var(--primary-blue); border-radius: 50%; }
+        .user-profile { display: flex; align-items: center; gap: 8px; color: var(--text-main); font-weight: 500; font-size: 14px; cursor: pointer; }
+        .user-profile i.fa-user { color: var(--slate); font-size: 18px; }
+        .user-profile i.fa-chevron-down { font-size: 10px; color: var(--slate); }
+
+        .main-container { max-width: 1400px; margin: 0 auto; padding: 48px 32px; }
+        .page-header { margin-bottom: 32px; }
+        .page-header h1 { font-size: 32px; color: var(--primary-navy); margin-bottom: 8px; }
+        .page-header p { color: var(--slate); font-size: 16px; }
+
+        .layout-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 32px; }
+        .card { background: var(--white); padding: 32px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); margin-bottom: 24px; }
+        .card-title { font-size: 18px; font-weight: 600; color: var(--primary-navy); margin-bottom: 24px; border-bottom: 1px solid var(--border-color); padding-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+        
+        .setting-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .setting-info { max-width: 70%; }
+        .setting-info h4 { font-size: 14px; font-weight: 600; color: var(--text-main); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+        .setting-info p { font-size: 13px; color: var(--slate); }
+        .setting-input { width: 160px; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px; text-align: right; color: var(--text-main); font-weight: 500; }
+        
+        /* Modern Switch */
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--slate); transition: .3s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary-blue); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        .summary-list { list-style: none; margin-bottom: 24px; }
+        .summary-list li { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-color); font-size: 14px; color: var(--text-main); }
+        .summary-list li span { color: var(--slate); }
+        
+        .btn-primary { width: 100%; background: var(--primary-blue); color: var(--white); border: none; padding: 12px; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s; }
+        .btn-primary:hover { background: #005A96; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="index.html" class="brand">
+                    <i class="fa-solid fa-shield-halved brand-icon"></i>
+                    <div class="brand-text">
+                        <span class="brand-title">PayGuard AI</span>
+                        <span class="brand-subtitle">AI Safety Layer</span>
+                    </div>
+                </a>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Overview</a>
+                    <a href="dashboard.html" class="nav-link"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+                    <a href="agent.html" class="nav-link"><i class="fa-solid fa-brain"></i> AI Agent</a>
+                    <a href="transactions.html" class="nav-link"><i class="fa-solid fa-receipt"></i> Transactions</a>
+                    <a href="settings.html" class="nav-link active"><i class="fa-solid fa-shield-halved"></i> Policies</a>
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="env-indicator"><div class="env-dot"></div> Sandbox</div>
+                <i class="fa-regular fa-bell" style="color: var(--slate); font-size: 18px; cursor: pointer;"></i>
+                <div class="user-profile"><i class="fa-solid fa-user"></i> Sanket <i class="fa-solid fa-chevron-down"></i></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="page-header">
+            <h1>Financial Guardrails</h1>
+            <p>Control exactly how much autonomy your AI agents have.</p>
+        </div>
+
+        <div class="layout-grid">
+            <div>
+                <div class="card">
+                    <h2 class="card-title"><i class="fa-solid fa-money-bill-transfer"></i> Spending Limits</h2>
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <h4>Autonomous Transaction Limit</h4>
+                            <p>Maximum amount an AI agent can spend without manual approval.</p>
+                        </div>
+                        <input type="text" class="setting-input" value="$500">
+                    </div>
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <h4>Daily Limit</h4>
+                            <p>Maximum total autonomous spending per day.</p>
+                        </div>
+                        <input type="text" class="setting-input" value="$1,500">
+                    </div>
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <h4>Monthly Limit</h4>
+                            <p>Maximum total autonomous spending per month.</p>
+                        </div>
+                        <input type="text" class="setting-input" value="$10,000">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2 class="card-title"><i class="fa-solid fa-sliders"></i> Risk Controls</h2>
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <h4><i class="fa-solid fa-store-slash" style="color:var(--slate);"></i> New Merchant Protection</h4>
+                            <p>Detect unfamiliar merchants and require additional approval.</p>
+                        </div>
+                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <h4><i class="fa-solid fa-triangle-exclamation" style="color:var(--slate);"></i> High-Risk Auto Block</h4>
+                            <p>Automatically block transactions classified as critical risk.</p>
+                        </div>
+                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <h4><i class="fa-solid fa-user-check" style="color:var(--slate);"></i> Human Approval Above Threshold</h4>
+                            <p>Require explicit user approval when transaction amount exceeds the limit.</p>
+                        </div>
+                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <h4><i class="fa-solid fa-lock" style="color:var(--slate);"></i> Digital Goods Protection</h4>
+                            <p>Require additional verification for high-value digital goods.</p>
+                        </div>
+                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="card" style="position: sticky; top: 120px;">
+                    <h2 class="card-title">YOUR CURRENT GUARDRAILS</h2>
+                    <ul class="summary-list">
+                        <li><span>Autonomous Limit</span> <strong>$500</strong></li>
+                        <li><span>Daily Limit</span> <strong>$1,500</strong></li>
+                        <li><span>New Merchant Protection</span> <strong style="color:var(--primary-blue);">Enabled</strong></li>
+                        <li><span>Critical Risk Blocking</span> <strong style="color:var(--primary-blue);">Enabled</strong></li>
+                    </ul>
+                    <div style="background: var(--bg-light); border-radius: 8px; padding: 16px; text-align: center; margin-bottom: 24px;">
+                        <div style="font-size:12px; color:var(--slate); text-transform:uppercase; font-weight:600; margin-bottom:4px;">Protection Level</div>
+                        <div style="font-size:18px; font-weight:700; color:var(--green-safe);"><i class="fa-solid fa-shield"></i> STRONG</div>
+                    </div>
+                    <button class="btn-primary">Save Guardrails</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

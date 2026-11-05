@@ -13,8 +13,8 @@ if not db_url or "mysql" not in db_url:
     print("Please make sure your .env has: DATABASE_URL=mysql+pymysql://root:password@localhost/pay_pal")
     exit(1)
 
-# Parse the URL (naive parsing for basic format)
-# mysql+pymysql://root:rajkumar@123@@localhost/pay_pal
+# Parse the URL (format: mysql+pymysql://username:password@localhost/pay_pal)
+# mysql+pymysql://root:password@localhost/pay_pal
 try:
     auth_part = db_url.split('://')[1].split('@localhost')[0]
     user = auth_part.split(':')[0]

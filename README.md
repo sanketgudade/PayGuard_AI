@@ -486,7 +486,7 @@ copy .env.example .env
 # macOS / Linux
 cp .env.example .env
 ```
-*(Optional)* Add your PayPal Sandbox Credentials and Gemini API key into `.env`:
+ Add your PayPal Sandbox Credentials and Gemini API key into `.env`:
 ```env
 PAYPAL_CLIENT_ID=your_paypal_sandbox_client_id_here
 PAYPAL_CLIENT_SECRET=your_paypal_sandbox_secret_here

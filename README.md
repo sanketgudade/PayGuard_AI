@@ -656,6 +656,7 @@ This project is open-source and licensed under the **[MIT License](LICENSE)**.
 - **Repository**: [https://github.com/sanketgudade/PayGuard_AI](https://github.com/sanketgudade/PayGuard_AI)
 - **Project Video Demo**: [https://youtu.be/vX7NR1KEbwo](https://youtu.be/vX7NR1KEbwo?si=gz4NmYOErgN_LG3a)
 - **Built for**: [PayPal AI Hackathon 2026 on Devpost](https://paypalaihackathon.devpost.com/)
+- **Linkdin**: [Linkdin](https://www.linkedin.com/in/sanket-rajkumar-gudade-139891337)
 
 ---
 
